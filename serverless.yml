@@ -1,0 +1,75 @@
+service: notes-api
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: eu-north-1
+  environment:
+    JWT_SECRET: ${env:JWT_SECRET}
+    DYNAMODB_TABLE: ${env:DYNAMODB_TABLE}
+
+plugins:
+  - serverless-offline
+
+resources:
+  Resources:
+    NotesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: notesTable
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+functions:
+  signup:
+    handler: handlers/user.signup
+    events:
+      - http:
+          path: api/user/signup
+          method: post
+  login:
+    handler: handlers/user.login
+    events:
+      - http:
+          path: api/user/login
+          method: post
+  getNotes:
+    handler: handlers/notes.getNotes
+    events:
+      - http:
+          path: api/notes
+          method: get
+  createNote:
+    handler: handlers/notes.createNote
+    events:
+      - http:
+          path: api/notes
+          method: post
+  updateNote:
+    handler: handlers/notes.updateNote
+    events:
+      - http:
+          path: api/notes/{id}
+          method: put
+  deleteNote:
+    handler: handlers/notes.deleteNote
+    events:
+      - http:
+          path: api/notes/{id}
+          method: delete
+  restoreNote:
+    handler: handlers/restore.restoreNote
+    events:
+      - http:
+          path: api/notes/restore/{id}
+          method: post
+  getDeletedNotes:
+    handler: handlers/restore.getDeletedNotes
+    events:
+      - http:
+          path: api/notes/deleted
+          method: get
