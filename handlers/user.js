@@ -99,8 +99,8 @@ const login = async (event) => {
     return {
       statusCode: 200,
       body: JSON.stringify({ 
-        token,
-        message: "Login successful, your session will expire in 1 hour."
+      token,
+      message: "Login successful, your session will expire in 1 hour.\nPlease include this token in the Authorization header for all other requests."
       }),
     };
   } catch (err) {
