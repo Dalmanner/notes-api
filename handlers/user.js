@@ -4,9 +4,8 @@ import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
-const USERS_TABLE = process.env.DYNAMODB_TABLE; // Samma tabell används för enkelhet
+const USERS_TABLE = process.env.DYNAMODB_TABLE;
 
-// Funktion för att registrera en användare
 const signup = async (event) => {
   try {
     const { username, password } = JSON.parse(event.body);
@@ -18,7 +17,6 @@ const signup = async (event) => {
       };
     }
 
-    // Kolla om användaren redan finns
     const params = {
       TableName: USERS_TABLE,
       Key: { id: username },
@@ -34,13 +32,11 @@ const signup = async (event) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Skapa användarobjekt
     const user = {
       id: username,
       password: hashedPassword,
     };
 
-    // Spara användaren i DynamoDB
     await dynamoDb
       .put({
         TableName: USERS_TABLE,
